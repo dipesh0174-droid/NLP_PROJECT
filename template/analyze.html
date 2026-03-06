@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Analyze - Hindi Sentiment Analyzer{% endblock %}
+
+{% block content %}
+<div class="hero" style="padding-top: 100px;">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <h1><i class="fas fa-search"></i> Advanced Analysis</h1>
+            <p>विस्तृत हिंदी सेंटिमेंट विश्लेषण + प्रोबैबिलिटी स्कोर</p>
+        </div>
+        
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <form id="analyze-form">
+                <div class="textarea-container">
+                    <textarea id="text-input" class="textarea" placeholder="अपना हिंदी टेक्स्ट यहाँ लिखें...&#10;उदाहरण: यह फिल्म बहुत अच्छी लगी, एक्टिंग कमाल की थी!" required></textarea>
+                    <div class="char-counter">
+                        <span id="char-count">0</span>/500
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button type="submit" class="btn" style="font-size: 1.2rem; padding: 18px 50px;">
+                        <i class="fas fa-brain"></i> विश्लेषण करें
+                    </button>
+                </div>
+            </form>
+            <div id="loading" style="display: none; text-align: center; margin-top: 2rem;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #667eea;"></i>
+                <p style="margin-top: 1rem; font-size: 1.2rem;">AI विश्लेषण हो रहा है...</p>
+            </div>
+            <div id="results" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('text-input').addEventListener('input', function() {
+    const count = this.value.length;
+    document.getElementById('char-count').textContent = count;
+});
+</script>
+{% endblock %}
