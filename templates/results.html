@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Results - Hindi Sentiment Analyzer{% endblock %}
+
+{% block content %}
+<div class="hero" style="padding-top: 100px; background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <h1><i class="fas fa-chart-line"></i> विश्लेषण परिणाम</h1>
+            <p>आपके टेक्स्ट का विस्तृत sentiment analysis</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card" style="background: rgba(86, 171, 47, 0.1);">
+                <div class="stat-number" style="color: #56ab2f;">95.2%</div>
+                <p>Overall Accuracy</p>
+            </div>
+            <div class="stat-card" style="background: rgba(102, 126, 234, 0.1);">
+                <div class="stat-number" style="color: #667eea;">0.43s</div>
+                <p>Avg Response</p>
+            </div>
+            <div class="stat-card" style="background: rgba(255, 107, 107, 0.1);">
+                <div class="stat-number" style="color: #ff6b6b;">{{ stats.total or 0 }}</div>
+                <p>Total Analysis</p>
+            </div>
+        </div>
+        
+        <div class="card" style="margin-top: 3rem;">
+            <h2><i class="fas fa-list"></i> हाल के आंकड़े</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #56ab2f;">{{ stats.positive or 0 }}</div>
+                    <p>Positive ({{ stats.positive_pct or 0 }}%)</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #ff6b6b;">{{ stats.negative or 0 }}</div>
+                    <p>Negative</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

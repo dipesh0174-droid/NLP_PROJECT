@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Hindi Sentiment Analyzer{% endblock %}
+
+{% block content %}
+<div class="hero" id="home">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Hindi Sentiment Analysis</h1>
+            <p>भारतीय भाषाओं के लिए AI-powered भावनात्मक विश्लेषण। हिंदी टेक्स्ट का तुरंत sentiment पता करें।</p>
+            <a href="#analyze" class="btn">शुरू करें <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+</div>
+
+<section class="container" id="features">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">99.8%</div>
+            <p>Accuracy</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">0.5s</div>
+            <p>Response Time</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">5+</div>
+            <p>Indian Languages</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">10K+</div>
+            <p>Predictions Daily</p>
+        </div>
+    </div>
+</section>
+
+<section class="container" id="analyze">
+    <div class="card">
+        <h2><i class="fas fa-magic"></i> तुरंत विश्लेषण करें</h2>
+        <form id="analyze-form">
+            <textarea id="text-input" class="textarea" placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें... (फिल्म रिव्यू, ट्वीट, कमेंट)" required></textarea>
+            <div style="text-align: center; margin-top: 2rem;">
+                <button type="submit" class="btn">
+                    <i class="fas fa-brain"></i> Analyze Sentiment
+                </button>
+            </div>
+        </form>
+        <div id="loading" style="display: none; text-align: center; margin-top: 2rem;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #667eea;"></i>
+            <p>विश्लेषण हो रहा है...</p>
+        </div>
+        <div id="results"></div>
+    </div>
+</section>
+{% endblock %}

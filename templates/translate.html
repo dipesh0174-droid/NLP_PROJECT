@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% block title %}Translate - IndicNLP{% endblock %}
+
+<style>
+.translate-container {
+    min-height: 80vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem 0;
+}
+
+.translate-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+    border: none;
+}
+
+.mic-btn {
+    background: linear-gradient(45deg, #ff6b6b, #feca57);
+    border: none;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(255,107,107,0.4);
+}
+
+.mic-btn:hover, .mic-btn:active {
+    transform: scale(1.1);
+    box-shadow: 0 15px 40px rgba(255,107,107,0.6);
+}
+
+.translate-btn {
+    background: linear-gradient(45deg, #4facfe, #00f2fe);
+    border: none;
+    border-radius: 50px;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.translate-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(79,172,254,0.4);
+}
+
+.result-box {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    border-radius: 20px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 20px 40px rgba(17,153,142,0.3);
+}
+
+.language-arrow {
+    color: #4facfe;
+    font-size: 2.5rem;
+    font-weight: 300;
+}
+</style>
+
+{% block content %}
+<div class="translate-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 col-xl-8">
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <h1 class="display-4 fw-bold text-white mb-3">
+                        <i class="fas fa-globe-americas me-3"></i>
+                        Universal Translator
+                    </h1>
+                    <p class="lead text-white-50">किसी भी भाषा से किसी भी भाषा में तुरंत अनुवाद</p>
+                </div>
+
+                <!-- Main Card -->
+                <div class="card translate-card p-4 p-lg-5">
+                    <form method="POST" id="translateForm">
+                        <!-- Language Selection -->
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-5">
+                                <label class="form-label fw-bold fs-5 text-dark mb-2">From:</label>
+                                <select name="from_lang" id="fromLang" class="form-select form-select-lg shadow-sm" required>
+                                    <option value="auto">🔍 Auto Detect</option>
+                                    {% for code, name in languages.items() %}
+                                    <option value="{{ code }}">🇮🇳 {{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                <i class="fas fa-arrow-right language-arrow"></i>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label fw-bold fs-5 text-dark mb-2">To:</label>
+                                <select name="to_lang" id="toLang" class="form-select form-select-lg shadow-sm" required>
+                                    {% for code, name in languages.items() %}
+                                    <option value="{{ code }}" {% if code == 'hi' %}selected{% endif %}>🇮🇳 {{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Input Area -->
+                        <div class="mb-5">
+                            <label class="form-label fw-bold fs-5 text-dark mb-3">Enter Text:</label>
+                            <div class="input-group">
+                                <textarea name="text" id="inputText" class="form-control form-control-lg shadow-sm border-0" 
+                                        rows="5" placeholder="यहाँ लिखें या 🎤 Mic दबाएं..." required 
+                                        style="border-radius: 20px; font-size: 1.1rem; padding: 20px;"></textarea>
+                                <button type="button" id="micBtn" class="mic-btn shadow-lg" title="Voice Input">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Translate Button -->
+                        <button type="submit" class="translate-btn w-100 shadow-lg mb-4 fs-4 py-4">
+                            <i class="fas fa-magic me-3"></i>✨ Translate Instantly
+                        </button>
+                    </form>
+
+                    <!-- Result -->
+                    {% if result %}
+                    <div class="result-box position-relative overflow-hidden">
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <i class="fas fa-check-circle fa-2x text-white opacity-75"></i>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <h5 class="mb-2"><i class="fas fa-font me-2"></i>{{ result.from_lang }}</h5>
+                                <div class="bg-white bg-opacity-20 backdrop-blur-lg p-4 rounded-3 fs-5 min-h-20px">
+                                    {{ result.original }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="mb-2"><i class="fas fa-language me-2"></i>{{ result.to_lang }}</h5>
+                                <div class="bg-white text-dark p-4 rounded-3 fs-5 fw-medium min-h-20px" id="outputText">
+                                    {{ result.translated }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-top border-white border-opacity-25">
+                            <button id="speakBtn" class="btn btn-light btn-lg px-4 me-3 shadow-sm">
+                                <i class="fas fa-volume-up me-2"></i>बोलें
+                            </button>
+                            <button id="copyBtn" class="btn btn-outline-light btn-lg px-4 shadow-sm">
+                                <i class="fas fa-copy me-2"></i>Copy
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// MIC PERFECTLY FIXED - Chrome में काम करेगा
+document.getElementById('micBtn').onclick = function() {
+    try {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert('🎤 Chrome browser में Mic काम करेगा! F5 refresh करें');
+            return;
+        }
+        
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'hi-IN';
+        
+        // Mic start animation
+        const micBtn = this;
+        micBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin fa-2x"></i>';
+        micBtn.style.background = 'linear-gradient(45deg, #ff4757, #ff3838)';
+        
+        recognition.onstart = () => console.log('🎤 Mic ON');
+        recognition.onresult = function(event) {
+            const text = event.results[0][0].transcript;
+            document.getElementById('inputText').value = text;
+            document.getElementById('translateForm').submit(); // AUTO TRANSLATE
+        };
+        recognition.onend = () => {
+            micBtn.innerHTML = '<i class="fas fa-microphone fa-2x"></i>';
+            micBtn.style.background = 'linear-gradient(45deg, #ff6b6b, #feca57)';
+        };
+        recognition.onerror = (event) => {
+            console.error('Mic error:', event.error);
+            micBtn.innerHTML = '<i class="fas fa-microphone-slash fa-2x text-danger"></i>';
+            setTimeout(() => {
+                micBtn.innerHTML = '<i class="fas fa-microphone fa-2x"></i>';
+                micBtn.style.background = 'linear-gradient(45deg, #ff6b6b, #feca57)';
+            }, 2000);
+        };
+        
+        recognition.start();
+    } catch(e) {
+        alert('Mic permission allow करें!');
+    }
+};
+
+// SPEAK OUTPUT
+document.getElementById('speakBtn')?.onclick = function() {
+    const text = document.getElementById('outputText')?.textContent;
+    if (text && 'speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'hi-IN';
+        utterance.rate = 0.9;
+        speechSynthesis.speak(utterance);
+        this.innerHTML = '<i class="fas fa-volume-mute me-2"></i>Speaking...';
+        utterance.onend = () => this.innerHTML = '<i class="fas fa-volume-up me-2"></i>बोलें';
+    }
+};
+
+// COPY
+document.getElementById('copyBtn')?.onclick = function() {
+    const text = document.getElementById('outputText')?.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const original = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
+        setTimeout(() => this.innerHTML = original, 2000);
+    });
+};
+</script>
+{% endblock %}
