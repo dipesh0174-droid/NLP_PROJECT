@@ -5,3 +5,4 @@ pyyaml==6.0.1
 pandas==2.1.4
 numpy==1.24.3
 googletrans==4.0.0rc1
+requests
